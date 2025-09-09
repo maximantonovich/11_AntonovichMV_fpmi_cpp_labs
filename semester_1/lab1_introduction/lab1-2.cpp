@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cmath>
 int main() {
-    setlocale(LC_ALL, "Ru");
     int n, even;
     int odd = 1, a = 1;
     std::cout << "write number n\n";
@@ -24,3 +23,4 @@ int main() {
     std::cout << "summ of even: " << even << "\n" << "multiplication of odd: " << odd << "\n";
 
 }
+
