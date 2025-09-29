@@ -130,7 +130,7 @@ void random_input(double arr1[max], int n1) {
 	
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<int> dist(a,b);
+	std::uniform_real_distribution<double> dist(a,b);
 
 	for (int i = 0; i < n1; i++)
 	{
