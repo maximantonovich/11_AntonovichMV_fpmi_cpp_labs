@@ -74,7 +74,7 @@ int main() {
     
     }
     int prod = 1;
-    if (max_index = n-1)
+    if (max_index == n-1)
     {
         prod = 0; 
     }
