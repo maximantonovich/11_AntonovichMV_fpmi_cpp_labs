@@ -84,7 +84,7 @@ void keyboard_input(int** arr1, int m1)
 			}
 		}
 	}
-    std::cout << "\n"; //для красоты отделил сам ввод от выводом массива
+    std::cout << "\n"; 
 	for (int i = 0; i < m1; i++)
 	{
 		std::cout << "line " << i + 1 << " of matrix ";
@@ -94,7 +94,7 @@ void keyboard_input(int** arr1, int m1)
 		}
 		std::cout << "\n";
 	}
-    std::cout << "\n"; //для красоты отделил вывод массива от последующих выводов
+    std::cout << "\n"; 
 }
 
 
@@ -139,7 +139,7 @@ void random_input(int** arr2, int m2)
 		}
 		std::cout << "\n";
 	}
-    std::cout << "\n"; //для красоты отделил вывод массива от последующих выводов
+    std::cout << "\n"; 
 }
 
 
@@ -232,4 +232,5 @@ int* max_right_triangle(int** arr, int m)
     }
 
 }
+
 
