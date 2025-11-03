@@ -1,68 +1,112 @@
 #include <iostream>
 #include <random>
-void mas(int**& arr, int m); // инициализация массива
-void input_method(int** arr, int m);
-void keyboard_input(int** arr1, int m1); // ввод с клавиатуры
-void random_input(int** arr, int m); // рандомный ввод
-void swap(int** arr3, int m3); // меняет местами столбец начинающийся с 0 и первый столбец
+#include <exception>
+int arr_size(); // размер массива
+void mas(int** &arr, int m); // инициализация массива
+void input_method(int** arr, int m); //способ ввода
+void keyboard_input(int **arr, int m); // ввод с клавиатуры
+void random_input(int** arr, int m, std::mt19937* gen); // рандомный ввод
+void swap(int** arr, int m); // меняет местами столбец начинающийся с 0 и первый столбец
 int* max_right_triangle(int** arr, int m); //находит максимальный элемент в правом верхнем треугольнике
+void del_arr(int** arr, int m); // удаление массива
+void print_arr(int** arr, int m); // вывод массива
 
-int main()
+int main() 
 {
     int m;
-    std::cout << "write number of lines and columns\n";
-    if (!(std::cin >> m))
+    int** arr = nullptr;
+    try
+    {   
+        m = arr_size();
+        mas(arr, m);
+
+        
+
+        input_method(arr, m);
+        
+        swap(arr, m);
+        
+        int* max_number = max_right_triangle(arr, m);
+
+        if (max_number == nullptr)
+        {
+            std::cout << "all elements are the same";
+        }
+        else
+        {
+            std::cout << "max element of top right triangle is: " << *max_number;
+        }
+
+        del_arr(arr, m);
+    }
+    catch(const std::invalid_argument& e) 
     {
-        std::cout << "number of lines must be a number";
+        std::cerr << "got wrong type of variable";
+        if(arr != nullptr)
+        {
+            del_arr(arr, m);
+        }
         return 1;
+    }
+    catch(const std::length_error& e)
+    {
+        std::cerr << "got wrong size";
+        return 1;
+    }
+}
+
+int arr_size ()
+{
+    int m;
+    std::cout << "write number of columns and lines\n";
+    if(!(std::cin >> m))
+    {
+        throw std::invalid_argument("didnt get a number");
     }
     if (m <= 0)
     {
-        std::cout << "number of lines and columns must be more than 0";
-        return 1;
+        throw std::length_error("got size less than 1");
     }
-
-
-    int** arr;
-    mas(arr, m);
-
-    input_method(arr, m);
-
-
-    swap(arr, m);
-
-
-    int* max_number = max_right_triangle(arr, m);
-
-    if (max_number == nullptr)
-    {
-        std::cout << "all elements are the same";
-    }
-    else
-    {
-        std::cout << "max element of top right triangle is: " << *max_number;
-    }
-
-
-    for (int i = 0; i < m; i++)
-    {
-        delete[] arr[i];
-    }
-    delete[] arr;
-
+    return m;
 }
 
-void mas(int**& arr, int m)
+void mas(int** &arr, int m) 
 {
     arr = new int* [m];
+	for (int i = 0; i < m; i++)
+	{
+		arr[i] = new int[m];
+	}
+}
+
+void print_arr(int** arr, int m)
+{
     for (int i = 0; i < m; i++)
-    {
-        arr[i] = new int[m];
-    }
+	{
+		std::cout << "line " << i + 1 << " of matrix ";
+		for (int j = 0; j < m; ++j) 
+		{
+			std::cout << arr[i][j] << " ";
+		}
+		std::cout << "\n";
+	}
+}
+
+void del_arr(int** arr, int m)
+{
+    for (int i = 0; i < m; i++)
+        {
+            delete [] arr[i];
+            arr[i] = nullptr;
+        }
+        delete[] arr;
 }
 
 void input_method(int** arr, int m)
 {
+    std::random_device rd;
+ 	std::mt19937 gen(rd());
+
     int method;
     std::cout << "write input method(1-keyboard, 2-random)\n";
     std::cin >> method;
@@ -74,133 +118,84 @@ void input_method(int** arr, int m)
         }
     case 2: 
         {
-        random_input(arr, m); break;
+        random_input(arr, m, &gen); break;
         }   
-    default: std::cout << "method must be 1 or 2"; exit(1);
+    default: std::cout << "method must be 1 or 2"; del_arr(arr, m); exit(1);
     }
 }
 
-void keyboard_input(int** arr1, int m1)
+void keyboard_input(int** arr, int m)
 {
-    for (int i = 0; i < m1; i++)
-    {
-        std::cout << "write " << i + 1 << " line of matrix: ";
-        for (int j = 0; j < m1; ++j)
-        {
-            if (!(std::cin >> arr1[i][j]))
-            {
-                std::cout << "elements of array have to be numbers";
-                for (int i = 0; i < m1; i++)
-                {
-                    delete[] arr1[i];
-                }
-                delete[] arr1;
-                exit(1);
-            }
-        }
-    }
-    std::cout << "\n";
-    for (int i = 0; i < m1; i++)
-    {
-        std::cout << "line " << i + 1 << " of matrix ";
-        for (int j = 0; j < m1; ++j)
-        {
-            std::cout << arr1[i][j] << " ";
-        }
-        std::cout << "\n";
-    }
-    std::cout << "\n";
+	for (int i = 0; i < m; i++)
+	{
+		std::cout << "write " << i + 1 << " line of matrix: ";
+		for (int j = 0; j < m; ++j)
+		{
+			if (!(std::cin >> arr[i][j]))
+			{
+                throw(std::invalid_argument("didnt get number"));
+			}
+		}
+	}
+    print_arr(arr, m);
 }
 
-int left_range(int** arr, int m)
+int left_range () // левая граница при рандомном вводе
 {
-    int a;
+    int left;
     std::cout << "write left range of numbers\n";
-    try
+    if(!(std::cin >> left))
     {
-        if (!(std::cin >> a))
-        {
-            throw "received not a number";
-        }
-        return a;
+        throw(std::invalid_argument("didn't get the integer"));
     }
-    catch (const char* error)
-    {
-        std::cerr << error;
-        for (int i = 0; i < m; i++)
-        {
-            delete[] arr[i];
-        }
-        delete[] arr;
-        exit(1);
-    }
+    return left;
 }
 
-int right_range(int** arr, int m)
+int right_range() // правая граница при рандомном вводе
 {
-    int b;
+    int right;
     std::cout << "write right range of numbers\n";
-    try
+    if(!(std::cin >> right))
     {
-        if (!(std::cin >> b))
-        {
-            throw "received not a number";
-        }
-        return b;
+        throw(std::invalid_argument("didn't get the integer"));
     }
-    catch (const char* error)
-    {
-        std::cerr << error;
-        for (int i = 0; i < m; i++)
-        {
-            delete[] arr[i];
-        }
-        delete[] arr;
-        exit(1);
-    }
+    return right;
 }
-void random_input(int** arr, int m)
+
+
+void random_input(int** arr, int m, std::mt19937* gen)
 {
+	int left = left_range();
+    int right = right_range();
     int temp1;
-    int a = left_range(arr, m);
-    int b = right_range(arr, m);
-    if (a > b)
-    {
-        temp1 = a;
-        a = b;
-        b = temp1;
-    }
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dist(a, b);
+	if (left > right)
+	{
+		temp1 = left;
+		left = right;
+		right = temp1;
+	}
 
-    for (int i = 0; i < m; i++)
-    {
-        for (int j = 0; j < m; ++j)
-        {
-            arr[i][j] = dist(gen);
-        }
-    }
-    for (int i = 0; i < m; i++)
-    {
-        std::cout << "line " << i + 1 << " of matrix ";
-        for (int j = 0; j < m; ++j)
-        {
-            std::cout << arr[i][j] << " ";
-        }
-        std::cout << "\n";
-    }
-    std::cout << "\n";
+	std::uniform_int_distribution<int> dist(left, right);
+
+	for (int i = 0; i < m; i++)
+	{
+		for (int j = 0; j < m; ++j)
+		{
+			arr[i][j] = dist(*gen);
+		}
+	}
+	
+    print_arr(arr, m);
 }
 
 
-void swap(int** arr3, int m3)
+void swap(int** arr, int m) 
 {
     int zero_index = -1;
-    for (int i = 0; i < m3; ++i)
+    for (int i = 0; i < m; ++i)
     {
-        if (arr3[0][i] == 0)
+        if (arr[0][i] == 0)
         {
             zero_index = i;
             break;
@@ -211,35 +206,26 @@ void swap(int** arr3, int m3)
         std::cout << "there is no first element of columns that is 0\n";
         return;
     }
-
-    for (int i = 0; i < m3; ++i) //меняю местами стобцы
+    
+    for (int i = 0; i < m; ++i) //меняю местами стобцы
     {
         int temp;
-        temp = arr3[i][0];
-        arr3[i][0] = arr3[i][zero_index];
-        arr3[i][zero_index] = temp;
+        temp = arr[i][0];
+        arr[i][0] = arr[i][zero_index];
+        arr[i][zero_index] = temp;
     }
-    std::cout << "new matrix is:\n";
-    for (int i = 0; i < m3; i++)
-    {
-        std::cout << "line " << i + 1 << " of matrix ";
-        for (int j = 0; j < m3; ++j)
-        {
-            std::cout << arr3[i][j] << " ";
-        }
-        std::cout << "\n";
-    }
-
+    std::cout << "new matrix is: \n";
+    print_arr(arr, m);
 }
 
-int sum_triangle(int m) // рекурсивная функция считающая кол-во элементов в правом верхнем треугольнике
+int sum_triangle (int m) // рекурсивная функция считающая кол-во элементов в правом верхнем треугольнике
 {
     if (m <= 0)
     {
         return 0;
     }
-
-    return m + sum_triangle(m - 1);
+    
+    return m + sum_triangle(m-1);
 }
 
 
@@ -248,17 +234,17 @@ int* max_right_triangle(int** arr, int m)
     int* max;
     int j = 0, count = 0; //count счётчик одинаковых елементов
     max = &arr[0][0];
-    for (int i = 0; i < m; ++i) // ищу макс элемент 
+    for (int i = 0; i < m ; ++i) // ищу макс элемент 
     {
-        for (; j < m; ++j)
+        for (;j < m; ++j)
         {
             if (arr[i][j] > *max)
             {
-                *max = arr[i][j];
+               *max = arr[i][j];
             }
-
+            
         }
-        j = i + 1;
+        j = i+1;
     }
     j = 0;
     for (int i = 0; i < m; i++) // кол-во одинаковых элементов
@@ -267,12 +253,12 @@ int* max_right_triangle(int** arr, int m)
         {
             if (arr[i][j] == *max)
             {
-                count++;
+                 count++;
             }
         }
         j = i + 1;
     }
-
+    
     int sum = sum_triangle(m);
     if (count == sum)
     {
@@ -284,6 +270,4 @@ int* max_right_triangle(int** arr, int m)
     }
 
 }
-
-
 
