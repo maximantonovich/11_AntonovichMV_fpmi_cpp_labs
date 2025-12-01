@@ -19,11 +19,12 @@ int main()
         
         std::string THE_word;
         THE_word = most_times_repeat_word(words, amount);
-        std::cout << THE_word;
+
+        std::cout << "\n"<< "word repeated most times is: " <<  THE_word;
 
 
     }
-    catch(const std::string& msg)
+    catch(const char* msg)
     {
         std::cerr << msg << '\n';
     }
@@ -71,12 +72,12 @@ void read_words_from_file(const std::string& filename, std::vector<std::string>&
 
     if (!in.is_open())
     {
-       throw "Couldnt open file \""  + filename + "\"";
+       throw ("Couldnt open file");
     }
 
     if (in.peek() == EOF)
     {
-        throw "File \"" + filename +  "\"is empty";
+        throw ("File is empty");
     }
     
     std::string word;
@@ -108,11 +109,13 @@ void read_words_from_file(const std::string& filename, std::vector<std::string>&
 
         
     }
+    std::cout << "words and times they are used: ";
     for (size_t j = 0; j < words.size(); j++)
     {
-       std::cout << words[j] << " ";
-        std::cout << amount[j] << " ";
+       std::cout << words[j] << "(";
+        std::cout << amount[j] << ") ";
     }
+    std::cout <<std::endl;
     
     
 }
@@ -122,7 +125,7 @@ std::string most_times_repeat_word(std::vector<std::string>& words, std::vector<
     std::string repeat_word;
     size_t max = amount[0];
     size_t max_index;
-    for (size_t i = 0; i < amount.size(); i++)
+    for (size_t i = 1; i < amount.size(); i++)
     {
         if (max < amount[i])
         {
