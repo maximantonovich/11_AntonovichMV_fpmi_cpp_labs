@@ -25,6 +25,7 @@ int main()
 {
 	try
 	{
+	std::cout << "write string\n";
 	std::string str = write_str();
 
 	
@@ -151,3 +152,4 @@ std::string replace_words(const std::string&str, size_t length, char separator, 
 	}
 	return res_str;
 }
+
