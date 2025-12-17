@@ -71,15 +71,12 @@ void ForwardList::Remove(int32_t value) {
     if (head != nullptr) {
         Node* prev;
         Node* cur;
-
-        while (head != nullptr && head->value_ == value) {
+        while (head->value_ == value) {
             PopFront();
+            if (head == nullptr) {
+                return;
+            }
         }
-
-        if (head == nullptr) {
-            return;
-        }
-
         prev = head;
         cur = head->next_;
 
