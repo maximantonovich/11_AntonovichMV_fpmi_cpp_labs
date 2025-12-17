@@ -126,5 +126,6 @@ public:
     size_t Size() const;
 
 private:
-    Node* head = nullptr;
+    Node* head;
+    size_t size_;
 };
